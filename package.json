@@ -1,0 +1,9 @@
+{
+  "name": "",
+  "version": "",
+  "dependencies": {
+    "inquirer": "^5.1.0",
+    "mysql": "^2.15.0",
+    "validator": "^9.4.1"
+  }
+}
