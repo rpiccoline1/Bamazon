@@ -78,7 +78,7 @@ function productChoice() {
   }]).then(function (answer) {
     console.log(answer);
     return new Promise(function (resolve, reject) {
-      connection.query('SELECT * FROM products WHERE ?', { item_id: answer.item }, function (err, res) {
+      connection.query("SELECT * FROM products WHERE ?", { item_id: answer.item }, function (err, res) {
         if (err) reject(err);
         resolve(res);
       });
@@ -96,11 +96,11 @@ function productChoice() {
         console.log(storedInfo);
 
       } else if (parseInt(answer.quantity) > parseInt(result[0].stock_quantity)) {
-        console.log('Insufficient quantity!');
+        console.log("Insufficient quantity!");
       } else {
-        console.log('An error occurred, exiting Bamazon, your order is not complete.');
+        console.log("An error occurred. Your order is not complete.");
       }
-        return storedInfo;
+      return storedInfo;
 
     }).then(function (storedInfo) {
 
@@ -110,7 +110,7 @@ function productChoice() {
         var itemId = storedInfo.answer.item;
         var totalCost = parseInt(storedInfo.result[0].price) * parseInt(storedInfo.answer.quantity);
 
-        connection.query('UPDATE products SET ? WHERE ?', [{
+        connection.query("UPDATE products SET ? WHERE ?", [{
           stock_quantity: newQuantity
         }, {
 
@@ -119,9 +119,23 @@ function productChoice() {
         }], function (err, res) {
 
           console.log("Order Total: $" + totalCost + ". Thank you!");
-
-          connection.end();
+          restartPrompt();
         });
+        function restartPrompt() {
+          inquirer.prompt({
+            type: "list",
+            name: "shop",
+            choices: ["Yes", "No"],
+            message: "Would you like to continue shopping?"
+          }).then(function (result) {
+            if (result.shop === "Yes") {
+              userPrompt();
+            } else {
+              console.log("Thank you for shopping with Bamazon!!")
+              connection.end();
+            }
+          });
+        }
       }
     })
   })
